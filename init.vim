@@ -18,7 +18,7 @@ set noswapfile
 " Inicializa vim-plug y establece la ubicación donde se instalarán los plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Inspeccionador de colores 
+" Inspeccionador de colores
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " Themes
@@ -45,7 +45,14 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'alvan/vim-closetag'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
+Plug 'Chiel92/vim-autoformat'
+Plug 'dense-analysis/ale'
 
+
+"IA
+Plug 'nvim-lua/plenary.nvim'
+Plug 'David-Kunz/nvim-ollama'
+:
 " Search plug
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -54,6 +61,9 @@ call plug#end()
 
 "Seccion de personalizacion de colores de IDE
 colorscheme gruvbox
+set background=dark
+hi Normal guibg=NONE ctermbg=NONE
+
 
 "Para JavaScript
 let g:gruvbox_contrast_dark = "hard"
@@ -79,11 +89,7 @@ set noshowmode
 
 "Mapping
 "
-"Identacion automatica
-vnoremap <S-i> >gv 
-nnoremap <S-i> >>
-nnoremap <S-u> <<
-vnoremap <S-u> <gv
+
 
 set shiftwidth=4
 set expandtab
@@ -102,14 +108,14 @@ nnoremap <S-Q> :q!<CR>
 
 " plugs
 " faster scrolling
-nnoremap <C-j> 10<C-e>
-nnoremap <C-k> 10<C-y>
+" Aumenta la velocidad del scroll con Ctrl + rueda del mouse
+nnoremap <S-s> <C-d>
+
 
 " run current file
-nnoremap <Leader>x :!node %<cr>
+nnoremap <Leader>n :!node %<cr>
 
 " nerdtree map
-nnoremap <Leader>n :NERDTreeFocus<CR>
 nnoremap <Leader>f :NERDTree<CR>
 nnoremap <silent> <S-f> :NERDTreeToggle<CR>
 
@@ -121,7 +127,7 @@ nnoremap <Leader>t :tabnew<CR>
 nnoremap <Leader>r :tabclose<CR>
 
 map <Leader>h :tabprevious<cr>
-map <Leader>l :tabnext<cr>  
+map <Leader>l :tabnext<cr>
 
 "Abrir el actual archivo html
 nnoremap <Leader>k :!microsoft-edge-stable %:p<CR>
@@ -129,7 +135,7 @@ nnoremap <Leader>k :!microsoft-edge-stable %:p<CR>
 "Search fzf mapping
 nnoremap <silent> <S-r> :Files<CR>
 
-"Copia todo el texto del archivo  
+"Copia todo el texto del archivo
 nnoremap <Leader>y ggVG"+y
 "→ Permite pegar en modo insertar usando Ctrl + V.
 inoremap <C-v> <C-r>+
@@ -158,26 +164,26 @@ set signcolumn=yes
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
+            \ coc#pum#visible() ? coc#pum#next(1) :
+            \ CheckBackspace() ? "\<Tab>" :
+            \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion
 if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
+    inoremap <silent><expr> <c-space> coc#refresh()
 else
-  inoremap <silent><expr> <c-@> coc#refresh()
+    inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
 " Use `[g` and `]g` to navigate diagnostics
@@ -195,11 +201,11 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call ShowDocumentation()<CR>
 
 function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
+    if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+    else
+        call feedkeys('K', 'in')
+    endif
 endfunction
 
 " Highlight the symbol and its references when holding the cursor
@@ -211,11 +217,11 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code
 
 augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s)
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+    autocmd!
+    " Setup formatexpr specified filetype(s)
+    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    " Update signature help on jump placeholder
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
 " Applying code actions to the selected code block
@@ -249,12 +255,12 @@ omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> to scroll float windows/popups
 if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+    inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+    vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
 " Use CTRL-S for selections ranges
@@ -330,18 +336,50 @@ set swapfile
 set directory=~/.local/state/nvim/swap//
 autocmd VimEnter * silent! !rm -f ~/.local/state/nvim/swap/*
 
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "javascript", "lua", "html", "css" },
-  highlight = { enable = true },
-  indent = { enable = true },
-}
-EOF
+" Habilitar ALE
+let g:ale_enabled = 1
 
-" Abre NERDTree automáticamente si no hay archivos abiertos
-autocmd VimEnter * if argc() == 0 | NERDTree | endif
+" Definir linters para JavaScript y TypeScript
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\   'typescript': ['eslint'],
+\   'css': ['stylelint'],
+\   'html': ['tidy'],
+\}
+
+" Habilitar Prettier como formateador
+let g:ale_fixers = {
+\   'javascript': ['prettier'],
+\   'typescript': ['prettier'],
+\   'css': ['prettier'],
+\   'html': ['prettier'],
+\}
+
+" Aplicar formateo al guardar
+let g:ale_fix_on_save = 1
+
+" Mostrar errores y advertencias en tiempo real
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_lint_on_insert_leave = 1
+autocmd BufWritePOst * silent! call ale#Queue(1)
 
 
+"Integrando IA DeepSeek-Coder con Ollama en Neovim 
+command! -nargs=+ Ollama call OllamaQuery(<f-args>)
+
+function! OllamaQuery(...)
+  let l:query = join(a:000, " ")
+  if empty(l:query)
+    echo "Debes ingresar una consulta."
+    return
+  endif
+  execute "vsplit | setlocal filetype=markdown | terminal echo '" . l:query . "' | ollama run deepseek-coder"
+endfunction
 
 
+" Abrir NERDTree si no se pasa un archivo al iniciar nvim
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
+" Cerrar NERDTree si es el único buffer abierto
+autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTree") | quit | endif

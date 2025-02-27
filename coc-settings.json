@@ -1,0 +1,12 @@
+{
+  "languageserver": {
+    "ollama": {
+      "command": "ollama",
+      "args": ["run", "deepseek-coder"],
+      "filetypes": ["javascript", "typescript", "html", "css", "json", "react"],
+      "trace.server": "verbose",
+      "settings": {}
+    }
+  }
+}
+
