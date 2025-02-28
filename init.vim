@@ -14,7 +14,6 @@ set relativenumber
 
 set noswapfile
 
-
 " Inicializa vim-plug y establece la ubicación donde se instalarán los plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -50,9 +49,9 @@ Plug 'dense-analysis/ale'
 
 
 "IA
-Plug 'nvim-lua/plenary.nvim'
-Plug 'David-Kunz/nvim-ollama'
-:
+Plug 'jamjarlabs/vim-llm'
+
+
 " Search plug
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -60,30 +59,46 @@ Plug 'junegunn/fzf.vim'
 call plug#end()
 
 "Seccion de personalizacion de colores de IDE
-colorscheme gruvbox
+"" Usar Gruvbox como esquema de colores
 set background=dark
-hi Normal guibg=NONE ctermbg=NONE
+let g:gruvbox_contrast_dark = "dark"
+colorscheme gruvbox
 
+" Establecer fondo transparente
 
-"Para JavaScript
-let g:gruvbox_contrast_dark = "hard"
-highlight @keyword.javascript guifg=#fe8019        "const and let"
-highlight @variable.javascript guifg=#FFEBB5        ""variables
-highlight @punctuation.bracket.javascript guifg=#FFE599 ""puntuacion
-highlight @punctuation.delimiter.javascript guifg=#c0c0c0 "punto y comas
-highlight @operator.javascript guifg=#FFBE55"operadores"
-highlight @number.javascript guifg=#c0c0c0"numeros"
+" Evitar conflictos con Treesitter
+let g:gruvbox_improved_warnings = 1
+let g:gruvbox_invert_selection = 0
 
-"Para HTML5
+" Asegurar que Treesitter esté habilitado
+lua << EOF
+require("nvim-treesitter.configs").setup {
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+"Resaltado para JavaScript
+highlight @keyword.javascript guifg=#fe8019
+highlight @variable.javascript guifg=#FFEBB5
+highlight @punctuation.bracket.javascript guifg=#FFE599
+highlight @punctuation.delimiter.javascript guifg=#c0c0c0
+highlight @operator.javascript guifg=#FFBE55
+highlight @number.javascript guifg=#c0c0c0
+highlight javaScriptReserved guifg=#83a598
+
+" Resaltado para HTML
 highlight @tag.html guifg=#d79921 gui=bold
 highlight @constant.html guifg=#b2b2b2
 highlight link @tag.delimiter.html Normal
 highlight @tag.attribute.html guifg=#bfbfbf
 
-
-highlight Normal ctermbg=NONE
+" Configuración adicional
 set laststatus=2
 set noshowmode
+
 " Establece el esquema de color después de call plug#end()
 
 
@@ -172,7 +187,7 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+            \: "\<C-b>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
     let col = col('.') - 1
@@ -364,22 +379,20 @@ let g:ale_lint_on_insert_leave = 1
 autocmd BufWritePOst * silent! call ale#Queue(1)
 
 
-"Integrando IA DeepSeek-Coder con Ollama en Neovim 
-command! -nargs=+ Ollama call OllamaQuery(<f-args>)
-
-function! OllamaQuery(...)
-  let l:query = join(a:000, " ")
-  if empty(l:query)
-    echo "Debes ingresar una consulta."
-    return
-  endif
-  execute "vsplit | setlocal filetype=markdown | terminal echo '" . l:query . "' | ollama run deepseek-coder"
-endfunction
+" Cargar Codeium automáticamente
 
 
-" Abrir NERDTree si no se pasa un archivo al iniciar nvim
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Activar Codeium en modo Insert
+"packadd codeium
+autocmd InsertEnter * CodeiumEnable
 
-" Cerrar NERDTree si es el único buffer abierto
-autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTree") | quit | endif
+" Atajos de teclado para Codeium
+inoremap <C-g> <Cmd>Codeium Accept<CR>
+inoremap <M-[> <Cmd>Codeium CyclePrev<CR>
+inoremap <M-]> <Cmd>Codeium CycleNext<CR>
+inoremap <C-x> <Cmd>Codeium Clear<CR>
+set runtimepath^=~/.vim packpath^=~/.vim
+packadd codeium
+
+
+
