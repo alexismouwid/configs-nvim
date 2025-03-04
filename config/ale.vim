@@ -1,5 +1,4 @@
 
-
 " Habilitar ALE
 let g:ale_enabled = 1
 
@@ -11,19 +10,18 @@ let g:ale_linters = {
 \   'html': ['tidy'],
 \}
 
-" Habilitar Prettier como formateador
 let g:ale_fixers = {
 \   'javascript': ['prettier'],
+\   'javascriptreact': ['prettier'],
 \   'typescript': ['prettier'],
-\   'css': ['prettier'],
-\   'html': ['prettier'],
+\   'typescriptreact': ['prettier']
 \}
-
-" Aplicar formateo al guardar
 let g:ale_fix_on_save = 1
+
+let g:ale_javascript_prettier_use_global = 1
 
 " Mostrar errores y advertencias en tiempo real
 let g:ale_lint_on_text_changed = 'always'
 let g:ale_lint_on_insert_leave = 1
-autocmd BufWritePOst * silent! call ale#Queue(1)
+autocmd BufWritePost * silent! call ale#Queue(1)
 

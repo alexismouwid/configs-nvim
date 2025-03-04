@@ -17,7 +17,7 @@ highlight @tag.attribute.html guifg=#bfbfbf
 "Personalizacion de JSX
 " Asegurar que las etiquetas HTML sean azules
 autocmd FileType javascriptreact highlight @tag.javascript guifg=#A3E635 gui=bold
-autocmd FileType javascriptreact highlight @tag.builtin.javascript guifg=#A3E635 gui=bold
+autocmd FileType javascriptreact highlight @tag.builtin.javascript guifg=#66CCFF
 highlight @tag.delimiter.javascript guifg=#b2b2b2
 highlight @tag.attribute.javascript guifg=#ffeb99
 highlight @tag.html.javascript guifg=#87CEEB
