@@ -2,7 +2,7 @@
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Inspeccionador de colores
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'sheerun/vim-polyglot'
 
 " Themes
 Plug 'morhetz/gruvbox'
@@ -31,12 +31,6 @@ Plug 'tpope/vim-surround'
 
 
 
-"IA
-Plug 'jamjarlabs/vim-llm'
-
-
 " Search plug
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
 " Finaliza la sección de plugins
 call plug#end()

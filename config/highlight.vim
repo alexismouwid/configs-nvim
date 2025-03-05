@@ -22,5 +22,6 @@ highlight @tag.delimiter.javascript guifg=#b2b2b2
 highlight @tag.attribute.javascript guifg=#ffeb99
 highlight @tag.html.javascript guifg=#87CEEB
 highlight @keyword.import.javascript guifg=#83A598
-
+highlight default link jsClassProperty NONE
+highlight jsClassProperty guifg=#7EC8E3 ctermfg=81
 
